@@ -89,11 +89,14 @@ RUN git clone --depth 1 -b v2.3.0 https://github.com/openalpr/openalpr \
 ### Install Telldus library for TellStick
 RUN apk add --no-cache \
         confuse libftdi1 \
+    && ln -s /usr/lib/libftdi1.so /usr/lib/libftdi.so \
+    && ln -s /usr/lib/libftdi1.a /usr/lib/libftdi.a \
+    && ln -s /usr/include/libftdi1/ftdi.h /usr/include/ftdi.h \
     && apk add --no-cache --virtual .build-dependencies \
         cmake build-base gcc doxygen confuse-dev argp-standalone libftdi1-dev git \
-    && git clone -b homeassistant-alpine https://github.com/bjorne/telldus \
+    && git clone -b compiler_issues --depth 1 https://github.com/henriknil/telldus \
     && cd telldus/telldus-core \
-    && cmake . -DFORCE_COMPILE_FROM_TRUNK=YES \
+    && cmake . -DFORCE_COMPILE_FROM_TRUNK=YES -DBUILD_TDADMIN=false -DSYSCONF_INSTALL_DIR=/config \
     && make \
     && make install \
     && apk del .build-dependencies \
